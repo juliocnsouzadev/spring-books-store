@@ -1,7 +1,9 @@
 package br.com.juliocnsouza.my_books.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +18,8 @@ public class Product implements Serializable {
     private String title;
     private String description;
     private int pages;
+    @ElementCollection
+    private List<Price> prices;
 
     public Long getId() {
         return id;
@@ -47,6 +51,14 @@ public class Product implements Serializable {
 
     public void setPages( int pages ) {
         this.pages = pages;
+    }
+
+    public List<Price> getPrices() {
+        return prices;
+    }
+
+    public void setPrices( List<Price> prices ) {
+        this.prices = prices;
     }
 
     @Override

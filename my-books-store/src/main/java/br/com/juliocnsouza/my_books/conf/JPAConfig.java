@@ -6,7 +6,6 @@ import javax.persistence.EntityManagerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -25,24 +24,39 @@ public class JPAConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        final LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        final LocalContainerEntityManagerFactoryBean factory
+                                                     = new LocalContainerEntityManagerFactoryBean();
 
-        JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        factory.setJpaVendorAdapter( jpaVendorAdapter );
+        factory.setJpaVendorAdapter( new HibernateJpaVendorAdapter() );
 
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource( URL , USER_NAME , PASSWORD );
-        dataSource.setDriverClassName( DRIVER );
+        DriverManagerDataSource dataSource = buildDataSource();
         factory.setDataSource( dataSource );
 
-        final Properties properties = new Properties();
-        properties.setProperty( "hibertnate.dialect" , "org.hibernate.MySQL5Dialect" );
-        properties.setProperty( "hibernate.show_sql" , "true" );
-        properties.setProperty( "hibernate.hbm2ddl.auto" , "update" );
+        Properties properties = buildProperties();
         factory.setJpaProperties( properties );
-
         factory.setPackagesToScan( Product.class.getPackage().getName() );
 
         return factory;
+    }
+
+    private DriverManagerDataSource buildDataSource() {
+        final DriverManagerDataSource dataSource
+                                      = new DriverManagerDataSource( URL ,
+                                                                     USER_NAME ,
+                                                                     PASSWORD );
+        dataSource.setDriverClassName( DRIVER );
+        return dataSource;
+    }
+
+    private Properties buildProperties() {
+        final Properties properties = new Properties();
+        properties.setProperty( "hibertnate.dialect" ,
+                                "org.hibernate.MySQL5Dialect" );
+        properties.setProperty( "hibernate.show_sql" ,
+                                "true" );
+        properties.setProperty( "hibernate.hbm2ddl.auto" ,
+                                "update" );
+        return properties;
     }
 
     @Bean
